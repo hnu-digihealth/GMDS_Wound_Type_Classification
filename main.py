@@ -18,24 +18,24 @@
 #-----------------------------------------------------#
 #                   Library imports                   #
 #-----------------------------------------------------#
-# External libraries
+# Python Standard Library
 import os
 import argparse
+
+# Third Party Libraries
 import pandas as pd
 from collections import defaultdict
 import random
-import numpy as np
-# TensorFlow libraries
-from tensorflow.keras.callbacks import ModelCheckpoint, CSVLogger, \
-                                       EarlyStopping
+from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.metrics import AUC
+
 # AUCMEDI libraries
 from aucmedi import *
 from aucmedi.utils.class_weights import compute_class_weights
-from aucmedi.sampling import sampling_split
 from aucmedi.neural_network.loss_functions import categorical_focal_loss
 from aucmedi.evaluation import *
 from aucmedi.ensemble import Bagging
+
 
 #-----------------------------------------------------#
 #                      Argparser                      #
@@ -50,6 +50,7 @@ parser.add_argument("--eval", help="Path to evaluation directory (will be create
 parser.add_argument("--gpu", help="GPU assignment",
                     required=False, type=int, dest="gpu", default=0)
 args = parser.parse_args()
+
 
 #-----------------------------------------------------#
 #                    Configurations                   #
@@ -71,6 +72,7 @@ batch_size = 48
 epochs = 1000
 iterations = 180
 
+
 #-----------------------------------------------------#
 #                       Sampling                      #
 #-----------------------------------------------------#
@@ -86,7 +88,7 @@ def prepare_data():
 
     # Step 2: Extract patient IDs
     def get_patient_id(path):
-        return path.split('/')[1].split('_')[0]  # e.g., 'ulc011'
+        return path.split('/')[1].split('_')[0]
 
     # Step 3: Group paths by patient
     patient_to_images = defaultdict(list)
@@ -141,6 +143,7 @@ def prepare_data():
 
     # return sampling map
     return ((train_paths, class_ohe_train), (test_paths, class_ohe_test)), (nclasses, class_names, image_format)
+
 
 #-----------------------------------------------------#
 #                   AUCMEDI Pipeline                  #
@@ -230,6 +233,7 @@ def run_aucmedi(train_x, train_y, test_x, test_y, ds_meta):
         out_path=path_evaluate,
         class_names=class_names
     )
+
 
 #-----------------------------------------------------#
 #                     Main Runner                     #
